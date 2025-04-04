@@ -2,8 +2,8 @@ pipeline {
     agent any      
     
     environment {         
-        BACKEND_IMAGE_NAME  = "Hotel-Room-Booking-and-Management-backend"         
-        FRONTEND_IMAGE_NAME = "Hotel-Room-Booking-and-Management-frontend"         
+        BACKEND_IMAGE_NAME  = "hotel-room-booking-and-management-backend"         
+        FRONTEND_IMAGE_NAME = "hotel-room-booking-and-management-frontend"         
         IMAGE_TAG           = "latest"         
         DOCKER_REGISTRY     = "docker.io"         
         DOCKER_REPO         = "shandeep04" 
