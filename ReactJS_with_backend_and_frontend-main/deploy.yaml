@@ -1,45 +1,45 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mern-studentportal-backend
+  name: Hotel-Room-Booking-and-Management-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mern-studentportal-backend
+      app: Hotel-Room-Booking-and-Management-backend
   template:
     metadata:
       labels:
-        app: mern-studentportal-backend
+        app: Hotel-Room-Booking-and-Management-backend
     spec:
       containers:
         - name: backend
-          image: docker.io/kiruthik1304/mern-studentportal-backend:latest
+          image: docker.io/shandeep04/hotel-room-booking-and-management-backend:latest
           ports:
             - containerPort: 5000
           env:
             - name: MONGO_URI
-              value: "mongodb+srv://mrbairavan:kiruthik13@cluster0.fhhvceb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+              value: "mongodb+srv://shandeep4621:shandeep4621@cluster0.dpijowj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
           imagePullPolicy: Always
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mern-studentportal-frontend
+  name: Hotel-Room-Booking-and-Management-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mern-studentportal-frontend
+      app: Hotel-Room-Booking-and-Management-frontend
   template:
     metadata:
       labels:
-        app: mern-studentportal-frontend
+        app: Hotel-Room-Booking-and-Management-frontend
     spec:
       containers:
         - name: frontend
-          image: docker.io/kiruthik1304/mern-studentportal-frontend:latest
+          image: docker.io/shandeep04/hotel-room-booking-and-management-frontend:latest
           ports:
             - containerPort: 3000
           imagePullPolicy: Always
@@ -51,7 +51,7 @@ metadata:
   name: backend-service
 spec:
   selector:
-    app: mern-studentportal-backend
+    app: Hotel-Room-Booking-and-Management-backend
   ports:
     - port: 5000
       targetPort: 5000
@@ -65,7 +65,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: mern-studentportal-frontend
+    app: Hotel-Room-Booking-and-Management-frontend
   ports:
     - port: 80
       targetPort: 3000
