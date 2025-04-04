@@ -7,7 +7,8 @@ pipeline {
         IMAGE_TAG           = "latest"         
         DOCKER_REGISTRY     = "docker.io"         
         DOCKER_REPO         = "shandeep04" 
-        KUBECONFIG = "/home/shandeep/.kube/config"    
+        // Use Jenkins-accessible kubeconfig path
+        KUBECONFIG          = "/var/lib/jenkins/.kube/config"    
     }      
 
     stages {         
@@ -38,6 +39,7 @@ pipeline {
         stage('Push Docker Images') {      
             steps {          
                 script {              
+                    // Secure login: Avoid exposing password directly (consider using credentials)
                     sh 'docker login -u shandeep04 -p "Shandeep-4621"'             
                     dockerImageBackend.push("${IMAGE_TAG}")              
                     dockerImageFrontend.push("${IMAGE_TAG}")          
@@ -45,14 +47,16 @@ pipeline {
             }  
         }            
 
-       stage('Deploy to Minikube') {
-    steps {
-        script {
-            sh 'kubectl apply -f deploy.yaml --kubeconfig=/home/shandeep/.kube/config --validate=false'
-        }
+        stage('Deploy to Minikube') {
+            steps {
+                script {
+                    withEnv(["KUBECONFIG=${KUBECONFIG}"]) {
+                        sh 'kubectl apply -f deploy.yaml --validate=false'
+                    }
+                }
+            }
+        }   
     }
-       }   
-    }  // <-- Closing `stages {}` block here
 
     post {         
         always {             
