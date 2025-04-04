@@ -1,51 +1,50 @@
-pipeline {     
-    agent any      
-    
-    environment {         
-        BACKEND_IMAGE_NAME  = "hotel-room-booking-and-management-backend"         
-        FRONTEND_IMAGE_NAME = "hotel-room-booking-and-management-frontend"         
-        IMAGE_TAG           = "latest"         
-        DOCKER_REGISTRY     = "docker.io"         
-        DOCKER_REPO         = "shandeep04" 
-        // Use Jenkins-accessible kubeconfig path
-        KUBECONFIG          = "/var/lib/jenkins/.kube/config"    
-    }      
+pipeline {
+    agent any
 
-    stages {         
-        stage('Checkout') {             
-            steps {                 
-                script {                     
-                    git branch: 'main', url: 'https://github.com/Shandeepsugumar/Devops_miniproject.git'                 
-                }             
-            }         
-        }          
-        
-        stage('Build Backend Image') {             
-            steps {                 
-                script {                     
-                    dockerImageBackend = docker.build("${DOCKER_REPO}/${BACKEND_IMAGE_NAME}:${IMAGE_TAG}", "./ReactJS_with_backend_and_frontend-main/backend")                 
-                }             
-            }         
-        }          
+    environment {
+        BACKEND_IMAGE_NAME  = "hotel-room-booking-and-management-backend"
+        FRONTEND_IMAGE_NAME = "hotel-room-booking-and-management-frontend"
+        IMAGE_TAG           = "latest"
+        DOCKER_REPO         = "shandeep04"
+        KUBECONFIG          = "/var/lib/jenkins/.kube/config"
+    }
 
-        stage('Build Frontend Image') {             
-            steps {                 
-                script {                     
-                    dockerImageFrontend = docker.build("${DOCKER_REPO}/${FRONTEND_IMAGE_NAME}:${IMAGE_TAG}", "./ReactJS_with_backend_and_frontend-main/frontend")                 
-                }             
-            }         
-        }          
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    git branch: 'main', url: 'https://github.com/Shandeepsugumar/Devops_miniproject.git'
+                }
+            }
+        }
 
-        stage('Push Docker Images') {      
-            steps {          
-                script {              
-                    // Secure login: Avoid exposing password directly (consider using credentials)
-                    sh 'docker login -u shandeep04 -p "Shandeep-4621"'             
-                    dockerImageBackend.push("${IMAGE_TAG}")              
-                    dockerImageFrontend.push("${IMAGE_TAG}")          
-                }      
-            }  
-        }            
+        stage('Build Backend Image') {
+            steps {
+                script {
+                    dockerImageBackend = docker.build("${DOCKER_REPO}/${BACKEND_IMAGE_NAME}:${IMAGE_TAG}", "./ReactJS_with_backend_and_frontend-main/backend")
+                }
+            }
+        }
+
+        stage('Build Frontend Image') {
+            steps {
+                script {
+                    dockerImageFrontend = docker.build("${DOCKER_REPO}/${FRONTEND_IMAGE_NAME}:${IMAGE_TAG}", "./ReactJS_with_backend_and_frontend-main/frontend")
+                }
+            }
+        }
+
+        stage('Push Docker Images') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    script {
+                        sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+                        dockerImageBackend.push("${IMAGE_TAG}")
+                        dockerImageFrontend.push("${IMAGE_TAG}")
+                    }
+                }
+            }
+        }
 
         stage('Deploy to Minikube') {
             steps {
@@ -55,12 +54,29 @@ pipeline {
                     }
                 }
             }
-        }   
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                script {
+                    withEnv(["KUBECONFIG=${KUBECONFIG}"]) {
+                        sh 'kubectl get pods'
+                        sh 'kubectl get svc'
+                    }
+                }
+            }
+        }
     }
 
-    post {         
-        always {             
-            echo "Pipeline execution completed."         
-        }     
-    } 
+    post {
+        always {
+            echo "Pipeline execution completed."
+        }
+        failure {
+            echo "Pipeline failed. Check logs above for details."
+        }
+        success {
+            echo "Pipeline ran successfully. Deployment complete!"
+        }
+    }
 }
