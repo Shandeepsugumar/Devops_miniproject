@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Hotel-Room-Booking-and-Management-backend
+  name: hotel-room-booking-and-management-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: Hotel-Room-Booking-and-Management-backend
+      app: hotel-room-booking-and-management-backend
   template:
     metadata:
       labels:
-        app: Hotel-Room-Booking-and-Management-backend
+        app: hotel-room-booking-and-management-backend
     spec:
       containers:
         - name: backend
@@ -26,16 +26,16 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Hotel-Room-Booking-and-Management-frontend
+  name: hotel-room-booking-and-management-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: Hotel-Room-Booking-and-Management-frontend
+      app: hotel-room-booking-and-management-frontend
   template:
     metadata:
       labels:
-        app: Hotel-Room-Booking-and-Management-frontend
+        app: hotel-room-booking-and-management-frontend
     spec:
       containers:
         - name: frontend
@@ -51,7 +51,7 @@ metadata:
   name: backend-service
 spec:
   selector:
-    app: Hotel-Room-Booking-and-Management-backend
+    app: hotel-room-booking-and-management-backend
   ports:
     - port: 5000
       targetPort: 5000
@@ -65,7 +65,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: Hotel-Room-Booking-and-Management-frontend
+    app: hotel-room-booking-and-management-frontend
   ports:
     - port: 80
       targetPort: 3000
