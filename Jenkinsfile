@@ -36,7 +36,7 @@ pipeline {
 
         stage('Push Docker Images') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credential', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     script {
                         sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
                         dockerImageBackend.push("${IMAGE_TAG}")
