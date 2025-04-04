@@ -38,7 +38,7 @@ pipeline {
         stage('Push Docker Images') {      
             steps {          
                 script {              
-                    sh 'docker login -u kiruthik1304 -p "kiruthik@13"'             
+                    sh 'docker login -u shandeep04 -p "Shandeep-4621"'             
                     dockerImageBackend.push("${IMAGE_TAG}")              
                     dockerImageFrontend.push("${IMAGE_TAG}")          
                 }      
