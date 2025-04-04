@@ -14,7 +14,7 @@ pipeline {
         stage('Checkout') {             
             steps {                 
                 script {                     
-                    git branch: 'main', url: 'https://github.com/kiruthik13/Devops_tasks.git'                 
+                    git branch: 'main', url: 'https://github.com/Shandeepsugumar/Devops_miniproject.git'                 
                 }             
             }         
         }          
