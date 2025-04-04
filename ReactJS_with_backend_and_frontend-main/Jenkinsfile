@@ -6,8 +6,8 @@ pipeline {
         FRONTEND_IMAGE_NAME = "Hotel-Room-Booking-and-Management-frontend"         
         IMAGE_TAG           = "latest"         
         DOCKER_REGISTRY     = "docker.io"         
-        DOCKER_REPO         = "kiruthik1304" 
-        KUBECONFIG = "/home/kiruthik/.kube/config"    
+        DOCKER_REPO         = "shandeep04" 
+        KUBECONFIG = "/home/shandeep/.kube/config"    
     }      
 
     stages {         
@@ -48,7 +48,7 @@ pipeline {
        stage('Deploy to Minikube') {
     steps {
         script {
-            sh 'kubectl apply -f deploy.yaml --kubeconfig=/home/kiruthik/.kube/config --validate=false'
+            sh 'kubectl apply -f deploy.yaml --kubeconfig=/home/shandeep/.kube/config --validate=false'
         }
     }
        }   
