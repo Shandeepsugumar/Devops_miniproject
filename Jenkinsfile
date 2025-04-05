@@ -7,6 +7,7 @@ pipeline {
         IMAGE_TAG           = "latest"
         DOCKER_REPO         = "shandeep04"
         KUBECONFIG          = "/var/lib/jenkins/.kube/config"
+        MINIKUBE_DIR        = "/home/shandeep/.minikube"
     }
 
     stages {
@@ -42,6 +43,19 @@ pipeline {
                         dockerImageBackend.push("${IMAGE_TAG}")
                         dockerImageFrontend.push("${IMAGE_TAG}")
                     }
+                }
+            }
+        }
+
+        stage('Fix Minikube Permissions') {
+            steps {
+                script {
+                    // Temporarily allow Jenkins access to Minikube certs
+                    sh """
+                        sudo chmod -R a+r ${MINIKUBE_DIR}/ca.crt
+                        sudo chmod -R a+r ${MINIKUBE_DIR}/profiles/minikube/client.crt
+                        sudo chmod -R a+r ${MINIKUBE_DIR}/profiles/minikube/client.key
+                    """
                 }
             }
         }
