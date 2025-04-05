@@ -48,23 +48,27 @@ pipeline {
         }
 
         stage('Setup Kubeconfig') {
-            steps {
-                script {
-                    // Copy kube config and certs to Jenkins-accessible location
-                    sh """
-                        sudo mkdir -p /var/lib/jenkins/.kube
-                        sudo mkdir -p /var/lib/jenkins/.minikube/profiles/minikube
+    steps {
+        script {
+            sh """
+                sudo mkdir -p /var/lib/jenkins/.kube
+                sudo mkdir -p /var/lib/jenkins/.minikube/profiles/minikube
 
-                        sudo cp ${SHANDEEP_HOME}/.kube/config /var/lib/jenkins/.kube/
-                        sudo cp ${SHANDEEP_HOME}/.minikube/ca.crt /var/lib/jenkins/.minikube/
-                        sudo cp ${SHANDEEP_HOME}/.minikube/profiles/minikube/client.crt /var/lib/jenkins/.minikube/profiles/minikube/
-                        sudo cp ${SHANDEEP_HOME}/.minikube/profiles/minikube/client.key /var/lib/jenkins/.minikube/profiles/minikube/
+                sudo cp /home/shandeep/.kube/config /var/lib/jenkins/.kube/
+                sudo cp /home/shandeep/.minikube/ca.crt /var/lib/jenkins/.minikube/
+                sudo cp /home/shandeep/.minikube/profiles/minikube/client.crt /var/lib/jenkins/.minikube/profiles/minikube/
+                sudo cp /home/shandeep/.minikube/profiles/minikube/client.key /var/lib/jenkins/.minikube/profiles/minikube/
 
-                        sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube /var/lib/jenkins/.minikube
-                    """
-                }
-            }
+                # Fix permissions
+                sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube /var/lib/jenkins/.minikube
+
+                # Rewrite paths inside the kubeconfig file
+                sudo sed -i 's|/home/shandeep/.minikube|/var/lib/jenkins/.minikube|g' /var/lib/jenkins/.kube/config
+            """
         }
+    }
+}
+
 
         stage('Deploy to Minikube') {
             steps {
