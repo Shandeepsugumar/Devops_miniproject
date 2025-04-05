@@ -7,7 +7,7 @@ pipeline {
         IMAGE_TAG           = "latest"
         DOCKER_REPO         = "shandeep04"
         KUBECONFIG          = "/var/lib/jenkins/.kube/config"
-        MINIKUBE_DIR        = "/home/shandeep/.minikube"
+        SHANDEEP_HOME       = "/home/shandeep"
     }
 
     stages {
@@ -47,14 +47,20 @@ pipeline {
             }
         }
 
-        stage('Fix Minikube Permissions') {
+        stage('Setup Kubeconfig') {
             steps {
                 script {
-                    // Temporarily allow Jenkins access to Minikube certs
+                    // Copy kube config and certs to Jenkins-accessible location
                     sh """
-                        sudo chmod -R a+r ${MINIKUBE_DIR}/ca.crt
-                        sudo chmod -R a+r ${MINIKUBE_DIR}/profiles/minikube/client.crt
-                        sudo chmod -R a+r ${MINIKUBE_DIR}/profiles/minikube/client.key
+                        sudo mkdir -p /var/lib/jenkins/.kube
+                        sudo mkdir -p /var/lib/jenkins/.minikube/profiles/minikube
+
+                        sudo cp ${SHANDEEP_HOME}/.kube/config /var/lib/jenkins/.kube/
+                        sudo cp ${SHANDEEP_HOME}/.minikube/ca.crt /var/lib/jenkins/.minikube/
+                        sudo cp ${SHANDEEP_HOME}/.minikube/profiles/minikube/client.crt /var/lib/jenkins/.minikube/profiles/minikube/
+                        sudo cp ${SHANDEEP_HOME}/.minikube/profiles/minikube/client.key /var/lib/jenkins/.minikube/profiles/minikube/
+
+                        sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube /var/lib/jenkins/.minikube
                     """
                 }
             }
